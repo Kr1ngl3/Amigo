@@ -8,9 +8,9 @@ namespace Amigo
 {
     internal class Board
     {
-        Tile[,] board;
+        public Tile[,] board;
 
-        Board(int gameNumber)
+        public Board(int gameNumber)
         {
             int difficulty = gameNumber * 4;
 
@@ -21,7 +21,10 @@ namespace Amigo
             {
                 Vector2Int pos = new(random.NextInt64(8), random.NextInt64(10) + 3);
 
-                board[pos.x, pos.y] = new Virus((int)random.NextInt64(2));
+                Virus virus = new((int)random.NextInt64(3));
+                virus.pos = pos;
+                board[pos.x, pos.y] = virus;
+
             }
 
 

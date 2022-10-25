@@ -8,9 +8,9 @@ namespace Amigo
 {
     internal abstract class Tile
     {
-        protected Color color;
-        protected State state;
-        protected Vector2Int? pos;
+        public Color color;
+        public State state;
+        public Vector2Int? pos;
     }
 
     public class Vector2Int
