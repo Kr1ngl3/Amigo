@@ -15,6 +15,8 @@ using System.Windows.Shapes;
 
 namespace Amigo
 {
+
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -23,6 +25,9 @@ namespace Amigo
         public MainWindow()
         {
             InitializeComponent();
+
+
+
         }
     }
 }
