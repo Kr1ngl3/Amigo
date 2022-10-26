@@ -1,33 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Amigo
 {
-    internal class Board
+    internal class Board : Dictionary<Vector, Tile>
     {
-        public Tile[,] board;
-
         public Board(int gameNumber, int x, int y)
         {
             int difficulty = gameNumber * 4;
 
-            board = new Tile[x,y];
             Random random = new Random();
 
             for (int i = 0; i < difficulty; i++)
             {
-                Vector2Int pos = new(random.NextInt64(8), random.NextInt64(10) + 3);
-
-                Virus virus = new((int)random.NextInt64(3));
-                virus.pos = pos;
-                board[pos.x, pos.y] = virus;
-
+                Vector pos = new(random.NextInt64(x), random.NextInt64(y - 3) + 3);
+                if (this.ContainsKey(pos))
+                {
+                    i--;
+                    continue;
+                }
+                Virus virus = new((int)random.NextInt64(Enum.GetNames(typeof(Color)).Length));
+                this.Add(pos, virus);
             }
+        }
+
+        public Vector GetPos(Tile t)
+        {
+            return this.FirstOrDefault(x => x.Value == t).Key;
+        }
 
 
+        // not implemented
+        public bool Move(Tile t, Vector dir)
+        {
+            Vector pos = this.GetPos(t);
+            if (this.ContainsKey(pos + dir))
+                return false;
+            return true;
         }
     }
 }

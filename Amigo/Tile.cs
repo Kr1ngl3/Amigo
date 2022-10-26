@@ -10,19 +10,6 @@ namespace Amigo
     {
         public Color color;
         public State state;
-        public Vector2Int? pos;
-    }
-
-    public class Vector2Int
-    {
-        public int x;
-        public int y;
-
-        public Vector2Int(long x, long y)
-        {
-            this.x = (int)x;
-            this.y = (int)y;
-        }
     }
 
     public enum Color
@@ -34,7 +21,6 @@ namespace Amigo
 
     public enum State
     { 
-        empty,
         pill,
         virus
     }

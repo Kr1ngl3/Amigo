@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.IO;
 
 namespace Amigo
 {
@@ -31,16 +32,36 @@ namespace Amigo
         readonly int
             x = 8,
             y = 13,
-            gameLevel = 5,
-            ups = 1; // game updates per second
+            gameLevel = 2,
+            ups = 60; // game updates per second
         Board board;
+        PillPiece player;
         public void Start()
         {
             board = new(gameLevel, x, y);
+            player = new(1);
+            board.Add(new Vector(2, 2), player);
             StartUpdateLoop();
         }
 
-        private void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.D)
+            {
+                Vector vec = board.GetPos(player);
+                vec.X++;
+                board.Remove(board.GetPos(player));
+                board.Add(vec, player);
+            }
+            if (e.Key == Key.A)
+            {
+                Vector vec = board.GetPos(player);
+                vec.X--;
+                board.Remove(board.GetPos(player));
+                board.Add(vec, player);
+            }
+        }
+        private void Update(Object source, System.Timers.ElapsedEventArgs e)
         {
             this.Dispatcher.Invoke(
             System.Windows.Threading.DispatcherPriority.Normal,
@@ -57,19 +78,29 @@ namespace Amigo
                     grid.RowDefinitions.Add(new RowDefinition());
                 }
 
-                foreach (Tile tile in board.board)
+                foreach (Tile tile in board.Values)
                 {
-                    if (tile != null)
+                    if (tile == null)
+                        continue;
+                    if (tile.state == State.virus)
                     {
-                        if (tile.pos == null)
-                            break;
                         TextBlock tb = new TextBlock();
                         tb.Text = "virus";
                         tb.Foreground = ParseColor(tile.color);
-                        Grid.SetColumn(tb, tile.pos.x);
-                        Grid.SetRow(tb, tile.pos.y);
+                        Vector pos = board.GetPos(tile);
+                        Grid.SetColumn(tb, (int)pos.X);
+                        Grid.SetRow(tb, (int)pos.Y);
 
                         grid.Children.Add(tb);
+                    }
+                    if (tile.state == State.pill)
+                    {
+                        Image img = new Image();
+                        img.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\test.png"));
+                        Vector pos = board.GetPos(tile);
+                        Grid.SetColumn(img, (int)pos.X);
+                        Grid.SetRow(img, (int)pos.Y);
+                        grid.Children.Add(img);
                     }
                 }
                 this.Content = grid;
@@ -82,7 +113,7 @@ namespace Amigo
             //make timer
             loopTimer = new System.Timers.Timer(1000 / ups);
             loopTimer.Enabled = true;
-            loopTimer.Elapsed += OnTimedEvent;
+            loopTimer.Elapsed += Update;
         }
         public Brush ParseColor(Color c)
         {
