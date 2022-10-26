@@ -22,6 +22,68 @@ namespace Amigo
     /// </summary>
     public partial class MainWindow : Window
     {
+
+        public MainWindow()
+        {
+            InitializeComponent();
+            Start();
+        }
+        readonly int
+            x = 8,
+            y = 13,
+            gameLevel = 5,
+            ups = 1; // game updates per second
+        Board board;
+        public void Start()
+        {
+            board = new(gameLevel, x, y);
+            StartUpdateLoop();
+        }
+
+        private void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
+        {
+            this.Dispatcher.Invoke(
+            System.Windows.Threading.DispatcherPriority.Normal,
+            new Action(() => 
+            {
+                Grid grid = new Grid();
+                grid.ShowGridLines = true;
+                for (int i = 0; i < x; i++)
+                {
+                    grid.ColumnDefinitions.Add(new ColumnDefinition());
+                }
+                for (int i = 0; i < y; i++)
+                {
+                    grid.RowDefinitions.Add(new RowDefinition());
+                }
+
+                foreach (Tile tile in board.board)
+                {
+                    if (tile != null)
+                    {
+                        if (tile.pos == null)
+                            break;
+                        TextBlock tb = new TextBlock();
+                        tb.Text = "virus";
+                        tb.Foreground = ParseColor(tile.color);
+                        Grid.SetColumn(tb, tile.pos.x);
+                        Grid.SetRow(tb, tile.pos.y);
+
+                        grid.Children.Add(tb);
+                    }
+                }
+                this.Content = grid;
+            }));
+        }
+        
+        System.Timers.Timer loopTimer;
+        public void StartUpdateLoop()
+        {
+            //make timer
+            loopTimer = new System.Timers.Timer(1000 / ups);
+            loopTimer.Enabled = true;
+            loopTimer.Elapsed += OnTimedEvent;
+        }
         public Brush ParseColor(Color c)
         {
             switch (c)
@@ -35,41 +97,6 @@ namespace Amigo
                 default:
                     return Brushes.White;
             }
-        }
-        public MainWindow()
-        {
-            InitializeComponent();
-
-            Grid grid = new Grid();
-            grid.ShowGridLines = true;
-            
-            for (int i = 0; i < 8; i++)
-            {
-                grid.ColumnDefinitions.Add(new ColumnDefinition());
-            }
-            for (int i = 0; i < 13; i++)
-            {
-                grid.RowDefinitions.Add(new RowDefinition());
-            }
-
-            Board board = new Board(5);
-
-            foreach (Tile tile in board.board)
-            { 
-                if (tile != null)
-                {
-                    if (tile.pos == null)
-                        break;
-                    TextBlock tb = new TextBlock();
-                    tb.Text = "virus";
-                    tb.Foreground = ParseColor(tile.color);
-                    Grid.SetColumn(tb, tile.pos.x);
-                    Grid.SetRow(tb, tile.pos.y);
-
-                    grid.Children.Add(tb);
-                }
-            }
-            this.Content = grid;
         }
     }
 }

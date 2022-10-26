@@ -10,11 +10,11 @@ namespace Amigo
     {
         public Tile[,] board;
 
-        public Board(int gameNumber)
+        public Board(int gameNumber, int x, int y)
         {
             int difficulty = gameNumber * 4;
 
-            board = new Tile[8,13];
+            board = new Tile[x,y];
             Random random = new Random();
 
             for (int i = 0; i < difficulty; i++)
