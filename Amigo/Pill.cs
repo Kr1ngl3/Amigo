@@ -13,9 +13,9 @@ namespace Amigo
         public PillPiece twoPiece;
         public Pill(int color1, int color2)
         {
-            onePiece = new(color1);
+            onePiece = new(color1, false);
             onePiece.rotation = Rotation.Rotate0;
-            twoPiece = new(color2);
+            twoPiece = new(color2, true);
             twoPiece.rotation = Rotation.Rotate180;
         }
     }

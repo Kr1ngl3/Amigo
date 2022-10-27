@@ -11,11 +11,13 @@ namespace Amigo
     {
         public Rotation rotation;
         public bool isConnected;
-        public PillPiece(int color)
+        public bool isTwoPiece;
+        public PillPiece(int color, bool isTwoPiece)
         {
             this.state = State.pill;
             this.color = (Color)color;
-            isConnected = true; 
+            isConnected = true;
+            this.isTwoPiece = isTwoPiece;
         }
 
     }

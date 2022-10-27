@@ -34,22 +34,39 @@ namespace Amigo
             y = 13,
             gameLevel = 2,
             ups = 60; // game updates per second
+        readonly double
+            fallSpeed = 1; // seconds to for fall
         Board board;
         public void Start()
         {
             board = new(gameLevel, x, y);
             StartUpdateLoop();
+            StartFallLoop();
         }
 
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.D)
+            if (activePill == null)
+                return;
+            if (e.Key == Key.J)
             {
                 board.Rotate(activePill, true);
             }
-            if (e.Key == Key.A)
+            if (e.Key == Key.K)
             {
                 board.Rotate(activePill, false);
+            }
+            if (e.Key == Key.Left)
+            {
+                board.PillMove(activePill, new Vector(-1, 0));
+            }
+            if (e.Key == Key.Right)
+            {
+                board.PillMove(activePill, new Vector(1, 0));
+            }
+            if (e.Key == Key.Down)
+            {
+                board.PillFall(activePill);
             }
         }
         Random random = new Random();
@@ -60,12 +77,7 @@ namespace Amigo
             System.Windows.Threading.DispatcherPriority.Normal,
             new Action(() => 
             {
-                if (activePill == null)
-                {
-                    activePill = new(random.Next(Enum.GetNames(typeof(Color)).Length), random.Next(Enum.GetNames(typeof(Color)).Length));
-                    board.Add(new Vector(3,1), activePill.onePiece);
-                    board.Add(new Vector(4,1), activePill.twoPiece);
-                }
+                
 
                 Grid grid = new Grid();
                 grid.ShowGridLines = true;
@@ -84,14 +96,13 @@ namespace Amigo
                         continue;
                     if (tile.state == State.virus)
                     {
-                        TextBlock tb = new TextBlock();
-                        tb.Text = "virus";
-                        tb.Foreground = ParseColor(tile.color);
                         Vector pos = board.GetPos(tile);
-                        Grid.SetColumn(tb, (int)pos.X);
-                        Grid.SetRow(tb, (int)pos.Y);
+                        Image img = new Image();
+                        img.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\" + ParseColorToString(tile.color) + "Virus.png"));
+                        Grid.SetColumn(img, (int)pos.X);
+                        Grid.SetRow(img, (int)pos.Y);
 
-                        grid.Children.Add(tb);
+                        grid.Children.Add(img);
                     }
                     if (tile.state == State.pill)
                     {
@@ -104,7 +115,7 @@ namespace Amigo
                         bi.EndInit();
                         img.Source = bi;
                         
-                        if (p == activePill.twoPiece)
+                        if (p.isTwoPiece)
                         {
                             img.RenderTransformOrigin = new Point(0.5, 0.5);
                             ScaleTransform flipTrans = new ScaleTransform();
@@ -121,8 +132,28 @@ namespace Amigo
                 this.Content = grid;
             }));
         }
-        
-        System.Timers.Timer updateLoopTimer;
+        private void Fall(Object source, System.Timers.ElapsedEventArgs e)
+        {
+            this.Dispatcher.Invoke(
+            System.Windows.Threading.DispatcherPriority.Normal,
+            new Action(() =>
+            {
+                if (activePill != null)
+                {
+                    bool test = board.PillFall(activePill);
+                    if (!test)
+                        activePill = null;
+                }
+                else
+                {
+                    activePill = new(random.Next(Enum.GetNames(typeof(Color)).Length), random.Next(Enum.GetNames(typeof(Color)).Length));
+                    board.Add(new Vector(3, 0), activePill.onePiece);
+                    board.Add(new Vector(4, 0), activePill.twoPiece);
+                }
+
+            }));
+        }
+            System.Timers.Timer updateLoopTimer;
         public void StartUpdateLoop()
         {
             //make timer
@@ -130,20 +161,13 @@ namespace Amigo
             updateLoopTimer.Enabled = true;
             updateLoopTimer.Elapsed += Update;
         }
-
-        public Brush ParseColor(Color c)
+        System.Timers.Timer fallLoopTimer;
+        public void StartFallLoop()
         {
-            switch (c)
-            {
-                case Color.red:
-                    return Brushes.Red;
-                case Color.blue:
-                    return Brushes.Blue;
-                case Color.yellow:
-                    return Brushes.Yellow;
-                default:
-                    return Brushes.White;
-            }
+            //make timer
+            fallLoopTimer = new System.Timers.Timer(1000 * fallSpeed);
+            fallLoopTimer.Enabled = true;
+            fallLoopTimer.Elapsed += Fall;
         }
         public string ParseColorToString(Color c)
         {
