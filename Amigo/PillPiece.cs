@@ -19,6 +19,5 @@ namespace Amigo
             isConnected = true;
             this.isTwoPiece = isTwoPiece;
         }
-
     }
 }

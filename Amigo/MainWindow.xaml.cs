@@ -142,7 +142,10 @@ namespace Amigo
                 {
                     bool test = board.PillFall(activePill);
                     if (!test)
+                    {
                         activePill = null;
+                        board.TestForConnections();
+                    }
                 }
                 else
                 {

@@ -134,9 +134,9 @@ namespace Amigo
         public void TestForConnections()
         {
             List<Vector> allConnectedTiles = new List<Vector>();
-            foreach(Vector vec in this.Keys)
-            {   
-                
+            foreach (Vector vec in this.Keys)
+            {
+
                 int searchLength = 0;
                 while (this.ContainsKey(new Vector(vec.X + searchLength, vec.Y)))
                 {
@@ -144,7 +144,7 @@ namespace Amigo
                 }
                 if (searchLength <= 4)
                 {
-                    for(int i = 0; i < searchLength; i++)
+                    for (int i = 0; i < searchLength; i++)
                     {
                         allConnectedTiles.Add(new Vector(vec.X + i, vec.Y));
                     }
@@ -163,12 +163,14 @@ namespace Amigo
                 }
 
             }
-            foreach(Vector vec in allConnectedTiles)
+            foreach (Vector vec in allConnectedTiles)
             {
                 if (this.ContainsKey(vec))
                 {
                     this.Remove(vec);
                 }
+            }
+        }
         public void Rotate(Pill pill, bool direction)
         {
             Vector orientation = GetPos(pill.onePiece) - GetPos(pill.twoPiece);
