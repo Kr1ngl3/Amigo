@@ -18,7 +18,7 @@ mono_crash.*
 
 # Build results
 [Dd]ebug/
-![Bb]in/[Dd]ebug/net6.0-windows/*.png
+!bin\Debug\net6.0-windows\*.png
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
