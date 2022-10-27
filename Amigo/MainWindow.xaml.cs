@@ -39,6 +39,7 @@ namespace Amigo
         Board board;
         public void Start()
         {
+            background.ImageSource = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\background.png"));
             board = new(gameLevel, x, y);
             StartUpdateLoop();
             StartFallLoop();
@@ -46,13 +47,18 @@ namespace Amigo
 
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
+            if (e.Key == Key.Enter)
+            {
+                this.WindowState = WindowState.Maximized;
+                this.WindowStyle = WindowStyle.None;
+            }
             if (activePill == null)
                 return;
-            if (e.Key == Key.J)
+            if (e.Key == Key.Z)
             {
                 board.Rotate(activePill, true);
             }
-            if (e.Key == Key.K)
+            if (e.Key == Key.X)
             {
                 board.Rotate(activePill, false);
             }
@@ -77,8 +83,6 @@ namespace Amigo
             System.Windows.Threading.DispatcherPriority.Normal,
             new Action(() => 
             {
-                
-
                 Grid grid = new Grid();
                 grid.ShowGridLines = true;
                 for (int i = 0; i < x; i++)
@@ -129,7 +133,7 @@ namespace Amigo
                         grid.Children.Add(img);
                     }
                 }
-                this.Content = grid;
+                game.Content = grid;
             }));
         }
         private void Fall(Object source, System.Timers.ElapsedEventArgs e)

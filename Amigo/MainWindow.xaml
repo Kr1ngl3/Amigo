@@ -5,7 +5,25 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Amigo"
         mc:Ignorable="d"
-        Title="MainWindow" Height="832" Width="512"
-        PreviewKeyDown="Window_PreviewKeyDown">
-
+        Title="MainWindow" Height="1115" Width="1920"
+        PreviewKeyDown="Window_PreviewKeyDown"
+        WindowState="Maximized"
+        WindowStyle="None"
+        ResizeMode="NoResize">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="512"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="832"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.Background>
+            <ImageBrush x:Name="background"/>
+        </Grid.Background>
+        <ContentPresenter Grid.Row="1" Grid.Column="1" x:Name="game"/>
+    </Grid>
 </Window>
