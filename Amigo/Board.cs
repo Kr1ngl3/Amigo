@@ -42,5 +42,46 @@ namespace Amigo
                 return false;
             return true;
         }
+
+        public void TestForConnections()
+        {
+            List<Vector> allConnectedTiles = new List<Vector>();
+            foreach(Vector vec in this.Keys)
+            {   
+                
+                int searchLength = 0;
+                while (this.ContainsKey(new Vector(vec.X + searchLength, vec.Y)))
+                {
+                    searchLength++;
+                }
+                if (searchLength <= 4)
+                {
+                    for(int i = 0; i < searchLength; i++)
+                    {
+                        allConnectedTiles.Add(new Vector(vec.X + i, vec.Y));
+                    }
+                }
+                searchLength = 0;
+                while (this.ContainsKey(new Vector(vec.X, vec.Y + searchLength)))
+                {
+                    searchLength++;
+                }
+                if (searchLength <= 4)
+                {
+                    for (int i = 0; i < searchLength; i++)
+                    {
+                        allConnectedTiles.Add(new Vector(vec.X, vec.Y + i));
+                    }
+                }
+
+            }
+            foreach(Vector vec in allConnectedTiles)
+            {
+                if (this.ContainsKey(vec))
+                {
+                    this.Remove(vec);
+                }
+            }
+        }
     }
 }
