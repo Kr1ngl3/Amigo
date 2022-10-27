@@ -35,12 +35,9 @@ namespace Amigo
             gameLevel = 2,
             ups = 60; // game updates per second
         Board board;
-        PillPiece player;
         public void Start()
         {
             board = new(gameLevel, x, y);
-            player = new(1);
-            board.Add(new Vector(2, 2), player);
             StartUpdateLoop();
         }
 
@@ -48,25 +45,28 @@ namespace Amigo
         {
             if (e.Key == Key.D)
             {
-                Vector vec = board.GetPos(player);
-                vec.X++;
-                board.Remove(board.GetPos(player));
-                board.Add(vec, player);
+                board.Rotate(activePill, true);
             }
             if (e.Key == Key.A)
             {
-                Vector vec = board.GetPos(player);
-                vec.X--;
-                board.Remove(board.GetPos(player));
-                board.Add(vec, player);
+                board.Rotate(activePill, false);
             }
         }
+        Random random = new Random();
+        Pill? activePill;
         private void Update(Object source, System.Timers.ElapsedEventArgs e)
         {
             this.Dispatcher.Invoke(
             System.Windows.Threading.DispatcherPriority.Normal,
             new Action(() => 
             {
+                if (activePill == null)
+                {
+                    activePill = new(random.Next(Enum.GetNames(typeof(Color)).Length), random.Next(Enum.GetNames(typeof(Color)).Length));
+                    board.Add(new Vector(3,1), activePill.onePiece);
+                    board.Add(new Vector(4,1), activePill.twoPiece);
+                }
+
                 Grid grid = new Grid();
                 grid.ShowGridLines = true;
                 for (int i = 0; i < x; i++)
@@ -95,9 +95,24 @@ namespace Amigo
                     }
                     if (tile.state == State.pill)
                     {
+                        PillPiece p = (PillPiece)tile;
                         Image img = new Image();
-                        img.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\test.png"));
-                        Vector pos = board.GetPos(tile);
+                        BitmapImage bi = new BitmapImage();
+                        bi.BeginInit();
+                        bi.UriSource = new Uri(Directory.GetCurrentDirectory() + @"\" + ParseColorToString(p.color) + "Pill.png");
+                        bi.Rotation = p.rotation;
+                        bi.EndInit();
+                        img.Source = bi;
+                        
+                        if (p == activePill.twoPiece)
+                        {
+                            img.RenderTransformOrigin = new Point(0.5, 0.5);
+                            ScaleTransform flipTrans = new ScaleTransform();
+                            flipTrans.ScaleY = -1;
+                            img.RenderTransform = flipTrans;
+                        }
+
+                        Vector pos = board.GetPos(p);
                         Grid.SetColumn(img, (int)pos.X);
                         Grid.SetRow(img, (int)pos.Y);
                         grid.Children.Add(img);
@@ -107,14 +122,15 @@ namespace Amigo
             }));
         }
         
-        System.Timers.Timer loopTimer;
+        System.Timers.Timer updateLoopTimer;
         public void StartUpdateLoop()
         {
             //make timer
-            loopTimer = new System.Timers.Timer(1000 / ups);
-            loopTimer.Enabled = true;
-            loopTimer.Elapsed += Update;
+            updateLoopTimer = new System.Timers.Timer(1000 / ups);
+            updateLoopTimer.Enabled = true;
+            updateLoopTimer.Elapsed += Update;
         }
+
         public Brush ParseColor(Color c)
         {
             switch (c)
@@ -127,6 +143,20 @@ namespace Amigo
                     return Brushes.Yellow;
                 default:
                     return Brushes.White;
+            }
+        }
+        public string ParseColorToString(Color c)
+        {
+            switch (c)
+            {
+                case Color.red:
+                    return "red";
+                case Color.blue:
+                    return "blue";
+                case Color.yellow:
+                    return "yellow";
+                default:
+                    return "";
             }
         }
     }
