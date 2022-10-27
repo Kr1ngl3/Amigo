@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -39,7 +39,9 @@ namespace Amigo
         Board board;
         public void Start()
         {
+            Thread.Sleep(20);
             background.ImageSource = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\background.png"));
+
             board = new(gameLevel, x, y);
             StartUpdateLoop();
             StartFallLoop();
@@ -47,13 +49,6 @@ namespace Amigo
 
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
-            {
-                this.WindowState = WindowState.Maximized;
-                this.WindowStyle = WindowStyle.None;
-                this.Height = 1080;
-                this.Width = 1920;
-            }
             if (activePill == null)
                 return;
             if (e.Key == Key.Z)
@@ -86,7 +81,6 @@ namespace Amigo
             new Action(() => 
             {
                 Grid grid = new Grid();
-                grid.ShowGridLines = true;
                 for (int i = 0; i < x; i++)
                 {
                     grid.ColumnDefinitions.Add(new ColumnDefinition());
@@ -170,6 +164,13 @@ namespace Amigo
             updateLoopTimer.Enabled = true;
             updateLoopTimer.Elapsed += Update;
         }
+
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            gameHeight.Height = new GridLength(0.77037037037 * this.Height);
+            gameWidth.Width = new GridLength(0.26666666666 * this.Width);
+        }
+
         System.Timers.Timer fallLoopTimer;
         public void StartFallLoop()
         {

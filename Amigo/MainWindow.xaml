@@ -7,22 +7,25 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="1115" Width="1920"
         PreviewKeyDown="Window_PreviewKeyDown"
-        
-        ResizeMode="NoResize">
+        WindowState="Maximized"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        SizeChanged="Window_SizeChanged">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="512"/>
+            <ColumnDefinition x:Name="gameWidth" Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="832"/>
+            <RowDefinition x:Name="gameHeight" Height="*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.Background>
             <ImageBrush x:Name="background"/>
         </Grid.Background>
+        <TextBlock x:Name="test"/>
         <ContentPresenter Grid.Row="1" Grid.Column="1" x:Name="game"/>
     </Grid>
 </Window>
