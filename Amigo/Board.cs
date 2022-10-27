@@ -8,6 +8,10 @@ using System.Windows.Media.Imaging;
 
 namespace Amigo
 {
+    /*
+        WindowState="Maximized"
+        WindowStyle="None"
+    */
     internal class Board : Dictionary<Vector, Tile>
     {
         int x, y;

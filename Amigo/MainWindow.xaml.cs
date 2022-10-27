@@ -51,6 +51,8 @@ namespace Amigo
             {
                 this.WindowState = WindowState.Maximized;
                 this.WindowStyle = WindowStyle.None;
+                this.Height = 1080;
+                this.Width = 1920;
             }
             if (activePill == null)
                 return;

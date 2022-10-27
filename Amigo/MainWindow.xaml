@@ -7,8 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="1115" Width="1920"
         PreviewKeyDown="Window_PreviewKeyDown"
-        WindowState="Maximized"
-        WindowStyle="None"
+        
         ResizeMode="NoResize">
     <Grid>
         <Grid.ColumnDefinitions>
