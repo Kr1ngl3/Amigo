@@ -10,7 +10,7 @@ namespace Amigo
     internal class PillPiece : Tile
     {
         public Rotation rotation;
-        public Pill pill;
+        public Pill? pill;
         public bool isTwoPiece;
 
         public PillPiece(int color, bool isTwoPiece, Pill pill)
@@ -20,5 +20,7 @@ namespace Amigo
             this.color = (Color)color;
             this.isTwoPiece = isTwoPiece;
         }
+
+        
     }
 }

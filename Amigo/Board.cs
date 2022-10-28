@@ -175,6 +175,19 @@ namespace Amigo
             {
                 if (ContainsKey(vec))
                 {
+                    TryGetValue(vec, out Tile tempTile);
+                    if(tempTile.state == State.pill)
+                    {
+                        PillPiece tempPillPiece = (PillPiece)tempTile;
+                        if (tempPillPiece.isTwoPiece)
+                        {
+                            tempPillPiece.pill.onePiece.pill = null;
+                        }
+                        else
+                        {
+                            tempPillPiece.pill.twoPiece.pill = null;
+                        }
+                    }
                     Remove(vec);
                 }
             }
