@@ -52,26 +52,21 @@ namespace Amigo
         {
             if (activePill == null)
                 return;
+
             if (e.Key == Key.Z)
-            {
                 board.Rotate(activePill, false);
-            }
+
             if (e.Key == Key.X)
-            {
                 board.Rotate(activePill, true);
-            }
+
             if (e.Key == Key.Left)
-            {
                 board.PillMove(activePill, new Vector(-1, 0));
-            }
+
             if (e.Key == Key.Right)
-            {
                 board.PillMove(activePill, new Vector(1, 0));
-            }
+
             if (e.Key == Key.Down)
-            {
                 board.PillFall(activePill);
-            }
         }
         Random random = new Random();
         Pill? activePill;

@@ -136,20 +136,46 @@ namespace Amigo
             return true;
         }
 
+        public bool Gravity()
+        {
+            bool test = false;
+            List<PillPiece> list = new();
+            foreach (Tile t in Values)
+            {
+                if (t.state == State.pill)
+                    list.Add((PillPiece)t);
+            }
+            foreach (PillPiece p in list)
+            {
+                if (p.pill == null)
+                {
+                    if (Move(p, new Vector(0, 1)))
+                        test = true;
+                }
+                else
+                {
+                    if (PillFall(p.pill))
+                        test = true;
+                }
+            }
+            return test;
+        }
+
+
         public void TestForConnections()
         {
             int destroyedVirus = 0;
             List<Vector> allConnectedTiles = new List<Vector>();
             foreach (Vector vec in Keys)
             {
-                
-                this.TryGetValue(vec, out Tile keyTile);
+
+                Tile keyTile = this[vec];
 
                 int searchLength = 0;
                 
                 while (ContainsKey(new Vector(vec.X + searchLength, vec.Y)))
                 {
-                    this.TryGetValue(new Vector(vec.X + searchLength, vec.Y), out Tile tempTile);
+                    Tile tempTile = this[new Vector(vec.X + searchLength, vec.Y)];
                     if(tempTile.color != keyTile.color) break;
                     searchLength++;
                 }
@@ -163,7 +189,7 @@ namespace Amigo
                 searchLength = 0;
                 while (ContainsKey(new Vector(vec.X, vec.Y + searchLength)))
                 {
-                    this.TryGetValue(new Vector(vec.X, vec.Y+ searchLength), out Tile tempTile);
+                    Tile tempTile = this[new Vector(vec.X, vec.Y + searchLength)];
                     if (tempTile.color != keyTile.color) break;
                     searchLength++;
                 }
@@ -180,17 +206,16 @@ namespace Amigo
             {
                 if (ContainsKey(vec))
                 {
-                    TryGetValue(vec, out Tile tempTile);
-                    if(tempTile.state == State.pill)
+                    Tile tempTile = this[vec];
+                    if (tempTile.state == State.pill)
                     {
                         PillPiece tempPillPiece = (PillPiece)tempTile;
-                        if (tempPillPiece.isTwoPiece)
+                        if (tempPillPiece.pill != null)
                         {
-                            tempPillPiece.pill.onePiece.pill = null;
-                        }
-                        else
-                        {
-                            tempPillPiece.pill.twoPiece.pill = null;
+                            if (tempPillPiece.isTwoPiece)
+                                tempPillPiece.pill.onePiece.pill = null;
+                            else
+                                tempPillPiece.pill.twoPiece.pill = null;
                         }
                     }
                     if (tempTile.state == State.virus) destroyedVirus++;
