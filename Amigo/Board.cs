@@ -135,11 +135,11 @@ namespace Amigo
         public void TestForConnections()
         {
             List<Vector> allConnectedTiles = new List<Vector>();
-            foreach (Vector vec in this.Keys)
+            foreach (Vector vec in Keys)
             {
 
                 int searchLength = 0;
-                while (this.ContainsKey(new Vector(vec.X + searchLength, vec.Y)))
+                while (ContainsKey(new Vector(vec.X + searchLength, vec.Y)))
                 {
                     searchLength++;
                 }
@@ -151,7 +151,7 @@ namespace Amigo
                     }
                 }
                 searchLength = 0;
-                while (this.ContainsKey(new Vector(vec.X, vec.Y + searchLength)))
+                while (ContainsKey(new Vector(vec.X, vec.Y + searchLength)))
                 {
                     searchLength++;
                 }
@@ -166,9 +166,9 @@ namespace Amigo
             }
             foreach (Vector vec in allConnectedTiles)
             {
-                if (this.ContainsKey(vec))
+                if (ContainsKey(vec))
                 {
-                    this.Remove(vec);
+                    Remove(vec);
                 }
             }
         }
