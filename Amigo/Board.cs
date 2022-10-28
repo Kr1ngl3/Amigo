@@ -135,14 +135,14 @@ namespace Amigo
         public void TestForConnections()
         {
             List<Vector> allConnectedTiles = new List<Vector>();
-            foreach (Vector vec in this.Keys)
+            foreach (Vector vec in Keys)
             {
                 
                 this.TryGetValue(vec, out Tile keyTile);
 
                 int searchLength = 0;
                 
-                while (this.ContainsKey(new Vector(vec.X + searchLength, vec.Y)))
+                while (ContainsKey(new Vector(vec.X + searchLength, vec.Y)))
                 {
                     this.TryGetValue(new Vector(vec.X + searchLength, vec.Y), out Tile tempTile);
                     if(tempTile.color != keyTile.color) break;
@@ -156,7 +156,7 @@ namespace Amigo
                     }
                 }
                 searchLength = 0;
-                while (this.ContainsKey(new Vector(vec.X, vec.Y + searchLength)))
+                while (ContainsKey(new Vector(vec.X, vec.Y + searchLength)))
                 {
                     this.TryGetValue(new Vector(vec.X, vec.Y+ searchLength), out Tile tempTile);
                     if (tempTile.color != keyTile.color) break;
@@ -173,9 +173,9 @@ namespace Amigo
             }
             foreach (Vector vec in allConnectedTiles)
             {
-                if (this.ContainsKey(vec))
+                if (ContainsKey(vec))
                 {
-                    this.Remove(vec);
+                    Remove(vec);
                 }
             }
         }

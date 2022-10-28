@@ -10,13 +10,14 @@ namespace Amigo
     internal class PillPiece : Tile
     {
         public Rotation rotation;
-        public bool isConnected;
+        public Pill pill;
         public bool isTwoPiece;
-        public PillPiece(int color, bool isTwoPiece)
+
+        public PillPiece(int color, bool isTwoPiece, Pill pill)
         {
             this.state = State.pill;
+            this.pill = pill;
             this.color = (Color)color;
-            isConnected = true;
             this.isTwoPiece = isTwoPiece;
         }
     }
