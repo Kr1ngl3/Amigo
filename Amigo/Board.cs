@@ -137,13 +137,18 @@ namespace Amigo
             List<Vector> allConnectedTiles = new List<Vector>();
             foreach (Vector vec in this.Keys)
             {
+                
+                this.TryGetValue(vec, out Tile keyTile);
 
                 int searchLength = 0;
+                
                 while (this.ContainsKey(new Vector(vec.X + searchLength, vec.Y)))
                 {
+                    this.TryGetValue(new Vector(vec.X + searchLength, vec.Y), out Tile tempTile);
+                    if(tempTile.color != keyTile.color) break;
                     searchLength++;
                 }
-                if (searchLength <= 4)
+                if (searchLength >= 4)
                 {
                     for (int i = 0; i < searchLength; i++)
                     {
@@ -153,9 +158,11 @@ namespace Amigo
                 searchLength = 0;
                 while (this.ContainsKey(new Vector(vec.X, vec.Y + searchLength)))
                 {
+                    this.TryGetValue(new Vector(vec.X, vec.Y+ searchLength), out Tile tempTile);
+                    if (tempTile.color != keyTile.color) break;
                     searchLength++;
                 }
-                if (searchLength <= 4)
+                if (searchLength >= 4)
                 {
                     for (int i = 0; i < searchLength; i++)
                     {

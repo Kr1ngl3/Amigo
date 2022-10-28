@@ -144,7 +144,7 @@ namespace Amigo
                     if (!test)
                     {
                         activePill = null;
-                        //board.TestForConnections();
+                        board.TestForConnections();
                     }
                 }
                 else
