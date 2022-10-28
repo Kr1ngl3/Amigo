@@ -183,11 +183,9 @@ namespace Amigo
                 case -10: // onePice left, twoPiece right
                     if (direction) // puts twoPiece down, onePiece up
                     {
-                        Vector pos = GetPos(pill.onePiece);
                         if (!Move(pill.onePiece, new Vector(0, -1)))
                             break;
-                        Remove(GetPos(pill.twoPiece));
-                        Add(pos, pill.twoPiece);
+                        Move(pill.twoPiece, new Vector(-1, 0));
                         pill.onePiece.rotation = Rotation.Rotate90;
                         pill.twoPiece.rotation = Rotation.Rotate90;
                         break;
@@ -203,11 +201,9 @@ namespace Amigo
                 case 10: // onePiece right, twoPiece left
                     if (direction) // puts onePiece down, twoPiece up
                     {
-                        Vector pos = GetPos(pill.twoPiece);
                         if (!Move(pill.twoPiece, new Vector(0, -1)))
                             break;
-                        Remove(GetPos(pill.onePiece));
-                        Add(pos, pill.onePiece);
+                        Move(pill.onePiece, new Vector(-1, 0));
                         pill.twoPiece.rotation = Rotation.Rotate270;
                         pill.onePiece.rotation = Rotation.Rotate270;
                         break;
@@ -225,10 +221,11 @@ namespace Amigo
                     {
                         if (!Move(pill.onePiece, new Vector(1, 1)))
                         {
-                            if (!Move(pill.onePiece, new Vector(-1, 1)))
+                            if (!Move(pill.twoPiece, new Vector(-1, 0)))
                                 break;
-                            pill.onePiece.rotation = Rotation.Rotate0;
-                            pill.twoPiece.rotation = Rotation.Rotate180;
+                            Move(pill.onePiece, new Vector(0, 1));
+                            pill.onePiece.rotation = Rotation.Rotate180;
+                            pill.twoPiece.rotation = Rotation.Rotate0;
                             break;
                         }
                         pill.onePiece.rotation = Rotation.Rotate180;
@@ -237,19 +234,15 @@ namespace Amigo
                     }
                     else
                     {
-                        Vector pos = GetPos(pill.twoPiece);
                         if (!Move(pill.twoPiece, new Vector(1, 0)))
                         {
-                            if (!Move(pill.twoPiece, new Vector(-1, 0)))
+                            if (!Move(pill.onePiece, new Vector(-1, 1)))
                                 break;
-                            Remove(GetPos(pill.onePiece));
-                            Add(pos, pill.onePiece);
-                            pill.onePiece.rotation = Rotation.Rotate180;
-                            pill.twoPiece.rotation = Rotation.Rotate0;
+                            pill.onePiece.rotation = Rotation.Rotate0;
+                            pill.twoPiece.rotation = Rotation.Rotate180;
                             break;
                         }
-                        Remove(GetPos(pill.onePiece));
-                        Add(pos, pill.onePiece);
+                        Move(pill.onePiece, new Vector(0, 1));
                         pill.onePiece.rotation = Rotation.Rotate0;
                         pill.twoPiece.rotation = Rotation.Rotate180;
                         break;
@@ -259,10 +252,11 @@ namespace Amigo
                     {
                         if (!Move(pill.twoPiece, new Vector(1, 1)))
                         {
-                            if (!Move(pill.twoPiece, new Vector(-1, 1)))
+                            if (!Move(pill.onePiece, new Vector(-1, 0)))
                                 break;
-                            pill.twoPiece.rotation = Rotation.Rotate0;
-                            pill.onePiece.rotation = Rotation.Rotate180;
+                            Move(pill.twoPiece, new Vector(0, 1));
+                            pill.twoPiece.rotation = Rotation.Rotate180;
+                            pill.onePiece.rotation = Rotation.Rotate0;
                             break;
                         }
                         pill.twoPiece.rotation = Rotation.Rotate180;
@@ -271,19 +265,15 @@ namespace Amigo
                     }
                     else
                     {
-                        Vector pos = GetPos(pill.onePiece);
                         if (!Move(pill.onePiece, new Vector(1, 0)))
                         {
-                            if (!Move(pill.onePiece, new Vector(-1, 0)))
+                            if (!Move(pill.twoPiece, new Vector(-1, 1)))
                                 break;
-                            Remove(GetPos(pill.twoPiece));
-                            Add(pos, pill.twoPiece);
-                            pill.twoPiece.rotation = Rotation.Rotate180;
-                            pill.onePiece.rotation = Rotation.Rotate0;
+                            pill.twoPiece.rotation = Rotation.Rotate0;
+                            pill.onePiece.rotation = Rotation.Rotate180;
                             break;
                         }
-                        Remove(GetPos(pill.twoPiece));
-                        Add(pos, pill.twoPiece);
+                        Move(pill.twoPiece, new Vector(0, 1));
                         pill.twoPiece.rotation = Rotation.Rotate0;
                         pill.onePiece.rotation = Rotation.Rotate180;
                         break;

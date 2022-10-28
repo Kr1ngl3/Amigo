@@ -53,11 +53,11 @@ namespace Amigo
                 return;
             if (e.Key == Key.Z)
             {
-                board.Rotate(activePill, true);
+                board.Rotate(activePill, false);
             }
             if (e.Key == Key.X)
             {
-                board.Rotate(activePill, false);
+                board.Rotate(activePill, true);
             }
             if (e.Key == Key.Left)
             {
@@ -144,7 +144,7 @@ namespace Amigo
                     if (!test)
                     {
                         activePill = null;
-                        board.TestForConnections();
+                        //board.TestForConnections();
                     }
                 }
                 else
