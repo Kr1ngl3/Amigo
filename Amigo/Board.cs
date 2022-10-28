@@ -4,7 +4,9 @@ using System.Linq;
 using System.Windows;
 using System.Text;
 using System.Threading.Tasks;
+using System.Media;
 using System.Windows.Media.Imaging;
+using System.IO;
 
 namespace Amigo
 {
@@ -220,8 +222,12 @@ namespace Amigo
                     }
                     if (tempTile.state == State.virus) destroyedVirus++;
                     Remove(vec);
+                    
                 }
             }
+            SoundPlayer player = new SoundPlayer(Directory.GetCurrentDirectory() + @"\Boing.wav");
+            player.Load();
+            player.Play();
             double pointsToAdd = difficulty * 0.5 * Math.Pow(2, destroyedVirus) * 100;
             points += pointsToAdd;
         }

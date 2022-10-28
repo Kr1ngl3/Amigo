@@ -42,7 +42,7 @@ namespace Amigo
         double points = 0;
         public void Start()
         {
-            SoundPlayer player = new SoundPlayer(Directory.GetCurrentDirectory() + @"\aaaaa.wav");
+            SoundPlayer player = new SoundPlayer(Directory.GetCurrentDirectory() + @"\sound.wav");
             player.Load();
             player.Play();
             bool soundFinished = true;
