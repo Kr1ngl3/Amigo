@@ -12,7 +12,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Media;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Amigo
 {
@@ -40,6 +42,12 @@ namespace Amigo
         double points = 0;
         public void Start()
         {
+            SoundPlayer player = new SoundPlayer(Directory.GetCurrentDirectory() + @"\aaaaa.wav");
+            player.Load();
+            player.Play();
+            bool soundFinished = true;
+
+            
             Thread.Sleep(20);
             background.ImageSource = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\background.png"));
 
