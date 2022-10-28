@@ -51,7 +51,7 @@ namespace Amigo
             Thread.Sleep(20);
             background.ImageSource = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\background.png"));
 
-            board = new(gameLevel, x, y, points);
+            board = new(gameLevel, x, y, points, this);
             StartUpdateLoop();
             StartFallLoop();
         }
@@ -175,7 +175,7 @@ namespace Amigo
             gameWidth.Width = new GridLength(0.26666666666 * this.Width);
         }
 
-        System.Timers.Timer fallLoopTimer;
+        public System.Timers.Timer fallLoopTimer;
         public void StartFallLoop()
         {
             //make timer

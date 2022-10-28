@@ -16,17 +16,19 @@ namespace Amigo
         int x, y;
         int difficulty = 1;
         double points;
-        public Board(int gameNumber, int x, int y, double points)
+        MainWindow mw;
+        public Board(int gameNumber, int x, int y, double points, MainWindow mw)
         {
+            this.mw = mw;
             this.y = y;
             this.x = x;
             this.points = points;
             
-            int difficulty = gameNumber * 4;
+            int virusCount = gameNumber * 4;
 
             Random random = new Random();
 
-            for (int i = 0; i < difficulty; i++)
+            for (int i = 0; i < virusCount; i++)
             {
                 Vector pos = new(random.Next(x), random.Next(y - 3) + 3);
                 if (ContainsKey(pos))
@@ -140,6 +142,12 @@ namespace Amigo
 
         public bool Gravity()
         {
+            /*double stop = DateTime.Now.Millisecond, start = DateTime.Now.Millisecond;
+            while (stop - start <= 500)
+            {
+                stop += DateTime.Now.Millisecond;
+            } */
+
             bool test = false;
             List<PillPiece> list = new();
             foreach (Tile t in Values)
@@ -225,11 +233,28 @@ namespace Amigo
                     
                 }
             }
+<<<<<<< Updated upstream
             SoundPlayer player = new SoundPlayer(Directory.GetCurrentDirectory() + @"\Boing.wav");
             player.Load();
             player.Play();
             double pointsToAdd = difficulty * 0.5 * Math.Pow(2, destroyedVirus) * 100;
             points += pointsToAdd;
+=======
+            if (destroyedVirus > 0)
+            {
+                double pointsToAdd = difficulty * 0.5 * Math.Pow(2, destroyedVirus) * 100;
+                points += pointsToAdd;
+                mw.test.Text = points.ToString();
+
+                bool test = true;
+                mw.fallLoopTimer.Stop();
+                while (test)
+                {
+                    test = Gravity();
+                }
+                mw.fallLoopTimer.Start();
+            }
+>>>>>>> Stashed changes
         }
 
         public void Rotate(Pill pill, bool direction)
