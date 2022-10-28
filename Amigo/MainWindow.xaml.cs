@@ -93,46 +93,51 @@ namespace Amigo
                 {
                     grid.RowDefinitions.Add(new RowDefinition());
                 }
-
-                foreach (Tile tile in board.Values)
+                try
                 {
-                    if (tile == null)
-                        continue;
-                    if (tile.state == State.virus)
-                    {
-                        Vector pos = board.GetPos(tile);
-                        Image img = new Image();
-                        img.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\" + ParseColorToString(tile.color) + "Virus.png"));
-                        Grid.SetColumn(img, (int)pos.X);
-                        Grid.SetRow(img, (int)pos.Y);
 
-                        grid.Children.Add(img);
-                    }
-                    if (tile.state == State.pill)
+                    foreach (Tile tile in board.Values)
                     {
-                        PillPiece p = (PillPiece)tile;
-                        Image img = new Image();
-                        BitmapImage bi = new BitmapImage();
-                        bi.BeginInit();
-                        bi.UriSource = new Uri(Directory.GetCurrentDirectory() + @"\" + ParseColorToString(p.color) + "Pill.png");
-                        bi.Rotation = p.rotation;
-                        bi.EndInit();
-                        img.Source = bi;
-                        
-                        if (p.isTwoPiece)
+                        if (tile == null)
+                            continue;
+                        if (tile.state == State.virus)
                         {
-                            img.RenderTransformOrigin = new Point(0.5, 0.5);
-                            ScaleTransform flipTrans = new ScaleTransform();
-                            flipTrans.ScaleY = -1;
-                            img.RenderTransform = flipTrans;
-                        }
+                            Vector pos = board.GetPos(tile);
+                            Image img = new Image();
+                            img.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\" + ParseColorToString(tile.color) + "Virus.png"));
+                            Grid.SetColumn(img, (int)pos.X);
+                            Grid.SetRow(img, (int)pos.Y);
 
-                        Vector pos = board.GetPos(p);
-                        Grid.SetColumn(img, (int)pos.X);
-                        Grid.SetRow(img, (int)pos.Y);
-                        grid.Children.Add(img);
+                            grid.Children.Add(img);
+                        }
+                        if (tile.state == State.pill)
+                        {
+                            PillPiece p = (PillPiece)tile;
+                            Image img = new Image();
+                            BitmapImage bi = new BitmapImage();
+                            bi.BeginInit();
+                            bi.UriSource = new Uri(Directory.GetCurrentDirectory() + @"\" + ParseColorToString(p.color) + "Pill.png");
+                            bi.Rotation = p.rotation;
+                            bi.EndInit();
+                            img.Source = bi;
+
+                            if (p.isTwoPiece)
+                            {
+                                img.RenderTransformOrigin = new Point(0.5, 0.5);
+                                ScaleTransform flipTrans = new ScaleTransform();
+                                flipTrans.ScaleY = -1;
+                                img.RenderTransform = flipTrans;
+                            }
+
+                            Vector pos = board.GetPos(p);
+                            Grid.SetColumn(img, (int)pos.X);
+                            Grid.SetRow(img, (int)pos.Y);
+                            grid.Children.Add(img);
+                        }
                     }
                 }
+                catch (Exception e)
+                { }
                 game.Content = grid;
             }));
         }
@@ -160,7 +165,7 @@ namespace Amigo
 
             }));
         }
-            System.Timers.Timer updateLoopTimer;
+        System.Timers.Timer updateLoopTimer;
         public void StartUpdateLoop()
         {
             //make timer
