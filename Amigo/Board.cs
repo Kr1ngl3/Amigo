@@ -12,10 +12,14 @@ namespace Amigo
     internal class Board : Dictionary<Vector, Tile>
     {
         int x, y;
-        public Board(int gameNumber, int x, int y)
+        int difficulty = 1;
+        double points;
+        public Board(int gameNumber, int x, int y, double points)
         {
             this.y = y;
             this.x = x;
+            this.points = points;
+            
             int difficulty = gameNumber * 4;
 
             Random random = new Random();
@@ -134,6 +138,7 @@ namespace Amigo
 
         public void TestForConnections()
         {
+            int destroyedVirus = 0;
             List<Vector> allConnectedTiles = new List<Vector>();
             foreach (Vector vec in Keys)
             {
@@ -188,10 +193,14 @@ namespace Amigo
                             tempPillPiece.pill.twoPiece.pill = null;
                         }
                     }
+                    if (tempTile.state == State.virus) destroyedVirus++;
                     Remove(vec);
                 }
             }
+            double pointsToAdd = difficulty * 0.5 * Math.Pow(2, destroyedVirus) * 100;
+            points += pointsToAdd;
         }
+
         public void Rotate(Pill pill, bool direction)
         {
             Vector orientation = GetPos(pill.onePiece) - GetPos(pill.twoPiece);

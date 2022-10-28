@@ -37,12 +37,13 @@ namespace Amigo
         readonly double
             fallSpeed = 1; // seconds to for fall
         Board board;
+        double points = 0;
         public void Start()
         {
             Thread.Sleep(20);
             background.ImageSource = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\background.png"));
 
-            board = new(gameLevel, x, y);
+            board = new(gameLevel, x, y, points);
             StartUpdateLoop();
             StartFallLoop();
         }
