@@ -34,7 +34,7 @@ namespace Amigo
         readonly int
             x = 8,
             y = 13,
-            gameLevel = 2,
+            gameLevel = 10,
             ups = 60; // game updates per second
         readonly double
             fallSpeed = 1; // seconds to for fall
@@ -78,12 +78,18 @@ namespace Amigo
         }
         Random random = new Random();
         Pill? activePill;
-        private void Update(Object source, System.Timers.ElapsedEventArgs e)
+        private void UpdateTimer(Object source, System.Timers.ElapsedEventArgs e)
         {
             this.Dispatcher.Invoke(
             System.Windows.Threading.DispatcherPriority.Normal,
             new Action(() => 
             {
+                Update();
+            }));
+        }
+
+        public void Update()
+        {
                 Grid grid = new Grid();
                 for (int i = 0; i < x; i++)
                 {
@@ -93,54 +99,49 @@ namespace Amigo
                 {
                     grid.RowDefinitions.Add(new RowDefinition());
                 }
-                try
+                foreach (Tile tile in board.Values)
                 {
-
-                    foreach (Tile tile in board.Values)
+                    if (tile == null)
+                        continue;
+                    if (tile.state == State.virus)
                     {
-                        if (tile == null)
-                            continue;
-                        if (tile.state == State.virus)
+                        Vector pos = board.GetPos(tile);
+                        Image img = new Image();
+                        img.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\" + ParseColorToString(tile.color) + "Virus.png"));
+                        Grid.SetColumn(img, (int)pos.X);
+                        Grid.SetRow(img, (int)pos.Y);
+
+                        grid.Children.Add(img);
+                    }
+                    if (tile.state == State.pill)
+                    {
+                        PillPiece p = (PillPiece)tile;
+                        Image img = new Image();
+                        BitmapImage bi = new BitmapImage();
+                        bi.BeginInit();
+                        bi.UriSource = new Uri(Directory.GetCurrentDirectory() + @"\" + ParseColorToString(p.color) + "Pill.png");
+                        bi.Rotation = p.rotation;
+                        bi.EndInit();
+                        img.Source = bi;
+
+                        if (p.isTwoPiece)
                         {
-                            Vector pos = board.GetPos(tile);
-                            Image img = new Image();
-                            img.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\" + ParseColorToString(tile.color) + "Virus.png"));
-                            Grid.SetColumn(img, (int)pos.X);
-                            Grid.SetRow(img, (int)pos.Y);
-
-                            grid.Children.Add(img);
+                            img.RenderTransformOrigin = new Point(0.5, 0.5);
+                            ScaleTransform flipTrans = new ScaleTransform();
+                            flipTrans.ScaleY = -1;
+                            img.RenderTransform = flipTrans;
                         }
-                        if (tile.state == State.pill)
-                        {
-                            PillPiece p = (PillPiece)tile;
-                            Image img = new Image();
-                            BitmapImage bi = new BitmapImage();
-                            bi.BeginInit();
-                            bi.UriSource = new Uri(Directory.GetCurrentDirectory() + @"\" + ParseColorToString(p.color) + "Pill.png");
-                            bi.Rotation = p.rotation;
-                            bi.EndInit();
-                            img.Source = bi;
 
-                            if (p.isTwoPiece)
-                            {
-                                img.RenderTransformOrigin = new Point(0.5, 0.5);
-                                ScaleTransform flipTrans = new ScaleTransform();
-                                flipTrans.ScaleY = -1;
-                                img.RenderTransform = flipTrans;
-                            }
-
-                            Vector pos = board.GetPos(p);
-                            Grid.SetColumn(img, (int)pos.X);
-                            Grid.SetRow(img, (int)pos.Y);
-                            grid.Children.Add(img);
-                        }
+                        Vector pos = board.GetPos(p);
+                        Grid.SetColumn(img, (int)pos.X);
+                        Grid.SetRow(img, (int)pos.Y);
+                        grid.Children.Add(img);
                     }
                 }
-                catch (Exception e)
-                { }
                 game.Content = grid;
-            }));
+
         }
+
         private void Fall(Object source, System.Timers.ElapsedEventArgs e)
         {
             this.Dispatcher.Invoke(
@@ -165,13 +166,13 @@ namespace Amigo
 
             }));
         }
-        System.Timers.Timer updateLoopTimer;
+        public System.Timers.Timer updateLoopTimer;
         public void StartUpdateLoop()
         {
             //make timer
             updateLoopTimer = new System.Timers.Timer(1000 / ups);
             updateLoopTimer.Enabled = true;
-            updateLoopTimer.Elapsed += Update;
+            updateLoopTimer.Elapsed += UpdateTimer;
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
