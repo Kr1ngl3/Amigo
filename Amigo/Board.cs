@@ -140,14 +140,9 @@ namespace Amigo
             return true;
         }
 
-        public bool Gravity()
+        bool allDone = false;
+        public void Gravity(Object source, System.Timers.ElapsedEventArgs e)
         {
-            /*double stop = DateTime.Now.Millisecond, start = DateTime.Now.Millisecond;
-            while (stop - start <= 500)
-            {
-                stop += DateTime.Now.Millisecond;
-            } */
-
             bool test = false;
             List<PillPiece> list = new();
             foreach (Tile t in Values)
@@ -168,12 +163,26 @@ namespace Amigo
                         test = true;
                 }
             }
-            return test;
+            mw.Dispatcher.Invoke(
+            System.Windows.Threading.DispatcherPriority.Normal,
+            new Action(() =>
+            {
+                mw.Update();
+            }));
+            allDone = !test;
+            if (allDone)
+            {
+                mw.fallLoopTimer.Start();
+                mw.updateLoopTimer.Start();
+                gravityLoopTimer.Enabled = false;
+                TestForConnections();
+            }
         }
 
 
         public void TestForConnections()
         {
+            bool tileRemoved = false;
             int destroyedVirus = 0;
             List<Vector> allConnectedTiles = new List<Vector>();
             foreach (Vector vec in Keys)
@@ -228,35 +237,42 @@ namespace Amigo
                                 tempPillPiece.pill.twoPiece.pill = null;
                         }
                     }
-                    if (tempTile.state == State.virus) destroyedVirus++;
-                    Remove(vec);
+                    if (tempTile.state == State.virus) 
+                        destroyedVirus++;
+                    tileRemoved = Remove(vec);
                     
                 }
             }
-<<<<<<< Updated upstream
-            SoundPlayer player = new SoundPlayer(Directory.GetCurrentDirectory() + @"\Boing.wav");
-            player.Load();
-            player.Play();
-            double pointsToAdd = difficulty * 0.5 * Math.Pow(2, destroyedVirus) * 100;
-            points += pointsToAdd;
-=======
-            if (destroyedVirus > 0)
+
+            if (tileRemoved)
             {
+                SoundPlayer player = new SoundPlayer(Directory.GetCurrentDirectory() + @"\Boing.wav");
+                player.Load();
+                player.Play();
                 double pointsToAdd = difficulty * 0.5 * Math.Pow(2, destroyedVirus) * 100;
                 points += pointsToAdd;
-                mw.test.Text = points.ToString();
-
-                bool test = true;
-                mw.fallLoopTimer.Stop();
-                while (test)
+                mw.Dispatcher.Invoke(
+                System.Windows.Threading.DispatcherPriority.Normal,
+                new Action(() =>
                 {
-                    test = Gravity();
-                }
-                mw.fallLoopTimer.Start();
+                    mw.test.Text = points.ToString();
+                }));
+                StartGravityLoop();
             }
->>>>>>> Stashed changes
         }
 
+        System.Timers.Timer gravityLoopTimer;
+        int fallTime = 5; // per second
+        public void StartGravityLoop()
+        {
+            //make timer
+            mw.fallLoopTimer.Stop();
+            mw.updateLoopTimer.Stop();
+
+            gravityLoopTimer = new System.Timers.Timer(1000 / fallTime);
+            gravityLoopTimer.Enabled = true;
+            gravityLoopTimer.Elapsed += Gravity;
+        }
         public void Rotate(Pill pill, bool direction)
         {
             Vector orientation = GetPos(pill.onePiece) - GetPos(pill.twoPiece);

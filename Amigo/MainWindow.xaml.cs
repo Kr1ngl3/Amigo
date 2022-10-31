@@ -34,7 +34,7 @@ namespace Amigo
         readonly int
             x = 8,
             y = 13,
-            gameLevel = 2,
+            gameLevel = 10,
             ups = 60; // game updates per second
         readonly double
             fallSpeed = 1; // seconds to for fall
@@ -78,12 +78,18 @@ namespace Amigo
         }
         Random random = new Random();
         Pill? activePill;
-        private void Update(Object source, System.Timers.ElapsedEventArgs e)
+        private void UpdateTimer(Object source, System.Timers.ElapsedEventArgs e)
         {
             this.Dispatcher.Invoke(
             System.Windows.Threading.DispatcherPriority.Normal,
             new Action(() => 
             {
+                Update();
+            }));
+        }
+
+        public void Update()
+        {
                 Grid grid = new Grid();
                 for (int i = 0; i < x; i++)
                 {
@@ -93,7 +99,6 @@ namespace Amigo
                 {
                     grid.RowDefinitions.Add(new RowDefinition());
                 }
-
                 foreach (Tile tile in board.Values)
                 {
                     if (tile == null)
@@ -118,7 +123,7 @@ namespace Amigo
                         bi.Rotation = p.rotation;
                         bi.EndInit();
                         img.Source = bi;
-                        
+
                         if (p.isTwoPiece)
                         {
                             img.RenderTransformOrigin = new Point(0.5, 0.5);
@@ -134,8 +139,9 @@ namespace Amigo
                     }
                 }
                 game.Content = grid;
-            }));
+
         }
+
         private void Fall(Object source, System.Timers.ElapsedEventArgs e)
         {
             this.Dispatcher.Invoke(
@@ -160,13 +166,13 @@ namespace Amigo
 
             }));
         }
-            System.Timers.Timer updateLoopTimer;
+        public System.Timers.Timer updateLoopTimer;
         public void StartUpdateLoop()
         {
             //make timer
             updateLoopTimer = new System.Timers.Timer(1000 / ups);
             updateLoopTimer.Enabled = true;
-            updateLoopTimer.Elapsed += Update;
+            updateLoopTimer.Elapsed += UpdateTimer;
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
