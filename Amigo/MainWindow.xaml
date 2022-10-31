@@ -30,7 +30,7 @@
         </Grid.Background>
         <TextBlock Grid.Row="1" x:Name="scoreText" />
 
-        <TextBlock Grid.Row="2" x:Name="optionText" Grid.Column="1" Margin="0,223,0,0" Grid.RowSpan="3" HorizontalAlignment="Left" VerticalAlignment="Top" Height="334" />
+        <TextBlock Grid.Row="2" x:Name="optionText" Grid.Column="1"  Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
         <ContentControl Grid.Column="2" Grid.Row="1">
             <Grid x:Name="preview">
                 <Grid.ColumnDefinitions>
