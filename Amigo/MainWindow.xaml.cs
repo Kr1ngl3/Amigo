@@ -38,6 +38,8 @@ namespace Amigo
 
             InitializeComponent();
             background.ImageSource = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\title.png"));
+            this.Icon = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\test.png"));
+
             SoundPlayer player = new SoundPlayer(Directory.GetCurrentDirectory() + @"\sol_badguy.wav");
             player.Load();
             player.Play();
