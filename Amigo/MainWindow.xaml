@@ -11,7 +11,7 @@
         WindowStyle="None"
         ResizeMode="NoResize"
         SizeChanged="Window_SizeChanged"
-        FontSize="75" Foreground="White">
+        Foreground="White">
     <Grid x:Name="mainGame">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -45,7 +45,7 @@
                 </Grid>
             </ContentControl>
 
-            <TextBlock FontSize="60" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Top" x:Name="infoText" Grid.Column="2" Grid.Row="2"/>
+            <TextBlock Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Top" x:Name="infoText" Grid.Column="2" Grid.Row="2"/>
 
             <ContentPresenter Grid.RowSpan="3" Grid.Row="1" Grid.Column="1" x:Name="game"/>
         </Grid>

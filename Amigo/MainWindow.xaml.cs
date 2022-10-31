@@ -268,6 +268,8 @@ namespace Amigo
             gameHeight3.Height = new GridLength(0.77037037037 * this.Height * 4.0/13.0);
             gameWidth.Width = new GridLength(0.26666666666 * this.Width);
 
+            this.FontSize = 60 * (this.Height / 1080);
+            infoText.FontSize = 45 * (this.Height / 1080);
         }
 
         public System.Timers.Timer fallLoopTimer;
