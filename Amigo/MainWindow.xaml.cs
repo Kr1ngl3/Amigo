@@ -28,21 +28,27 @@ namespace Amigo
 
         public MainWindow()
         {
+            gameState = GameState.title;
+            gameLevel = 1;
+
             InitializeComponent();
-            Start();
+            background.ImageSource = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\title.png"));
         }
         readonly int
             x = 8,
-            y = 13,
-            gameLevel = 1;
+            y = 13;
+        
+        int gameLevel;
 
         GameState gameState;
         readonly double
             fallSpeed = .5; // seconds to for fall
         Board board;
         public double points = 0;
-        public void Start()
+        public void Start(int gameLevel)
         {
+            gameState = GameState.playing;
+            this.gameLevel = gameLevel;
             SoundPlayer player = new SoundPlayer(Directory.GetCurrentDirectory() + @"\sound.wav");
             player.Load();
             player.Play();
@@ -52,11 +58,26 @@ namespace Amigo
             background.ImageSource = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\background.png"));
 
             board = new(gameLevel, x, y, this);
-            StartFallLoop();
         }
 
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
+            if (e.Key == Key.Enter)
+            {
+                if (gameState == GameState.win)
+                {
+                    Start(++gameLevel);
+                }
+                if (gameState == GameState.gameOver)
+                {
+                    Start(gameLevel);
+                }
+                if (gameState == GameState.title)
+                {
+                    Start(gameLevel);
+                    StartFallLoop();
+                }
+            }
             if (activePill == null)
                 return;
 
@@ -82,7 +103,7 @@ namespace Amigo
         public int Update()
         {
             int virusCount = 0;
-            scoreText.Text = points.ToString() + "\n\n\n\n" + "amogus";
+            scoreText.Text = "     Points: " + points.ToString() + "\n\n     Top: amogus";
             Grid grid = new Grid();
             for (int i = 0; i < x; i++)
             {
@@ -133,7 +154,7 @@ namespace Amigo
                 }
             }
             game.Content = grid;
-            infoText.Text = "\n\n" + gameLevel + "\n\n\n" + "69" + "\n\n\n\n" + virusCount;
+            infoText.Text = "\n\n     Game Level: " + gameLevel + "\n\n" + "     Game Speed: 69" + "\n\n     Virus Count: " + virusCount;
             return virusCount;
 
         }
@@ -152,6 +173,9 @@ namespace Amigo
                     gameState = GameState.win;
                 if (gameState == GameState.win)
                 {
+                    Image img = new Image();
+                    img.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\gameWin.png"));
+                    game.Content = img;
                     mario.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\marioWin.png"));
                     preview.Children.Remove(img1);
                     preview.Children.Remove(img2);
@@ -159,11 +183,11 @@ namespace Amigo
                 }
                 if (gameState == GameState.gameOver)
                 {
-                    Image img = new Image();
-                    img.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\gameOver.png"));
                     mario.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\marioDead.png"));
                     preview.Children.Remove(img1);
                     preview.Children.Remove(img2);
+                    Image img = new Image();
+                    img.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\gameOver.png"));
                     game.Content = img;
                     return;
                 }
@@ -274,5 +298,6 @@ namespace Amigo
         playing,
         gameOver,
         win,
+        title
     }
 }
