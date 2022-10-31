@@ -33,6 +33,9 @@ namespace Amigo
 
             InitializeComponent();
             background.ImageSource = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\title.png"));
+            SoundPlayer player = new SoundPlayer(Directory.GetCurrentDirectory() + @"\sol_badguy.wav");
+            player.Load();
+            player.Play();
         }
         readonly int
             x = 8,
@@ -45,13 +48,20 @@ namespace Amigo
             fallSpeed = .5; // seconds to for fall
         Board board;
         public double points = 0;
+        public MediaPlayer le_sound_player;
         public void Start(int gameLevel)
+
         {
             gameState = GameState.playing;
             this.gameLevel = gameLevel;
             SoundPlayer player = new SoundPlayer(Directory.GetCurrentDirectory() + @"\sound.wav");
             player.Load();
-            player.Play();
+            player.PlayLooping();
+
+
+
+
+
             bool soundFinished = true;
 
             mario.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\mario1.png"));
@@ -170,13 +180,30 @@ namespace Amigo
             new Action(() =>
             {
                 if (Update() == 0)
+                {
+
+                    if (gameState != GameState.win)
+                    {
+
+                        SoundPlayer player = new SoundPlayer(Directory.GetCurrentDirectory() + @"\ay_lamo.wav");
+                        player.Load();
+                        player.Play();
+
+                        le_sound_player = new MediaPlayer();
+                        le_sound_player.Open(new Uri(Directory.GetCurrentDirectory() + @"\wow.wav"));
+                       
+                        le_sound_player.Play();
+                    }
                     gameState = GameState.win;
-                if (gameState == GameState.win)
+
+                }
+                    if (gameState == GameState.win)
                 {
                     Image img = new Image();
                     img.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\gameWin.png"));
                     game.Content = img;
                     mario.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\marioWin.png"));
+
                     preview.Children.Remove(img1);
                     preview.Children.Remove(img2);
                     return;
@@ -193,6 +220,18 @@ namespace Amigo
                 }
                 if (activePill == null && (board.ContainsKey(new Vector(3, 0)) || board.ContainsKey(new Vector(4, 0))))
                 {
+                    if (gameState != GameState.gameOver)
+                    {
+
+                        SoundPlayer player = new SoundPlayer(Directory.GetCurrentDirectory() + @"\gameover.wav");
+                        player.Load();
+                        player.Play();
+
+                        le_sound_player = new MediaPlayer();
+                        le_sound_player.Open(new Uri(Directory.GetCurrentDirectory() + @"\VineBoom.wav"));
+
+                        le_sound_player.Play();
+                    }
                     gameState = GameState.gameOver;
                     return;
                 }

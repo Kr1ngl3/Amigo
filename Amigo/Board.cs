@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Media;
 using System.Windows.Media.Imaging;
 using System.IO;
+using System.Windows.Media;
 
 namespace Amigo
 {
@@ -243,12 +244,23 @@ namespace Amigo
 
             if (tileRemoved)
             {
-                SoundPlayer player = new SoundPlayer(Directory.GetCurrentDirectory() + @"\Boing.wav");
-                player.Load();
-                player.Play();
+                mw.le_sound_player = new MediaPlayer();
+                mw.le_sound_player.Open(new Uri(Directory.GetCurrentDirectory() + @"\clear.wav"));
+                mw.le_sound_player.Volume = 1.0;
+                mw.le_sound_player.Play();
+                //SoundPlayer player = new SoundPlayer(Directory.GetCurrentDirectory() + @"\Boing.wav");
+                //player.Load();
+                //player.Play();
                 double pointsToAdd = difficulty * 0.5 * Math.Pow(2, destroyedVirus) * 100;
                 mw.points += pointsToAdd;
                 StartGravityLoop();
+            }
+            else
+            {
+                mw.le_sound_player = new MediaPlayer();
+                mw.le_sound_player.Open(new Uri(Directory.GetCurrentDirectory() + @"\drop.wav"));
+                mw.le_sound_player.Volume = 1.0;
+                mw.le_sound_player.Play();
             }
         }
 
