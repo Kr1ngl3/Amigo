@@ -15,6 +15,8 @@ using System.Windows.Shapes;
 using System.Media;
 using System.IO;
 using System.Threading.Tasks;
+using System.Drawing;
+using System.Diagnostics;
 
 namespace Amigo
 {
@@ -30,33 +32,67 @@ namespace Amigo
         {
             gameState = GameState.title;
             gameLevel = 1;
+            gameSpeed = 1;
+            musicType = 1;
+            titlestate = 0;
 
             InitializeComponent();
             background.ImageSource = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\title.png"));
             SoundPlayer player = new SoundPlayer(Directory.GetCurrentDirectory() + @"\sol_badguy.wav");
             player.Load();
             player.Play();
+            updateOptionText();
+
         }
         readonly int
             x = 8,
             y = 13;
         
         int gameLevel;
+        double gameSpeed;
+        int musicType;
+        int titlestate;
 
         GameState gameState;
         readonly double
             fallSpeed = .5; // seconds to for fall
         Board board;
         public double points = 0;
+        public double topscore = 0;
         public MediaPlayer le_sound_player;
         public void Start(int gameLevel)
 
         {
             gameState = GameState.playing;
+            updateOptionText();
             this.gameLevel = gameLevel;
-            SoundPlayer player = new SoundPlayer(Directory.GetCurrentDirectory() + @"\sound.wav");
-            player.Load();
-            player.PlayLooping();
+            SoundPlayer player;
+            switch (musicType)
+            {
+                case 1:
+
+                    player = new SoundPlayer(Directory.GetCurrentDirectory() + @"\sound.wav");
+                    player.Load();
+                    player.PlayLooping();
+                    break;
+                case 2:
+                    player = new SoundPlayer(Directory.GetCurrentDirectory() + @"\aaaaa.wav");
+                    player.Load();
+                    player.PlayLooping();
+                    break;
+                case 3:
+                    player = new SoundPlayer(Directory.GetCurrentDirectory() + @"\type_3.wav");
+                    player.Load();
+                    player.PlayLooping();
+                    break;
+                case 4:
+                    player = new SoundPlayer(Directory.GetCurrentDirectory() + @"\type_4.wav");
+                    player.Load();
+                    player.PlayLooping();
+                    break;
+            }
+            
+
 
 
 
@@ -68,10 +104,89 @@ namespace Amigo
             background.ImageSource = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\background.png"));
 
             board = new(gameLevel, x, y, this);
+            topscore = ReadScore(Directory.GetCurrentDirectory() + @"\score.txt");
+        }
+
+        public void SaveScore(string FileName)
+        {
+            topscore = points;
+            StreamWriter sw = new StreamWriter(FileName, false);
+            sw.WriteLine(points);
+            sw.Close();
+        }
+
+        public double ReadScore(string FileName) {
+            StreamReader sr = new StreamReader(FileName);
+            
+
+            string score = sr.ReadLine();
+            
+            if (score == null)
+            {
+                return 0;
+
+            } else
+            {
+                double final_score = Convert.ToDouble(score);
+                return final_score;
+            }
+
+        }
+
+        public void updateOptionText()
+        {
+            if (gameState != GameState.title)
+            {
+                optionText.Text = "";
+                return;
+            }
+
+
+
+            switch (titlestate)
+            {
+                case 0:
+                    optionText.Text = "<Virus Level: " + gameLevel + ">\n" + "Game Speed: " + Get_GameSpeed_String() + "\n" + "Music Type: Type " + musicType + "\n" + "Press enter to start";
+                    break;
+                case 1:
+                    optionText.Text = "Virus Level: " + gameLevel + "\n" + "<Game Speed: " + Get_GameSpeed_String() + ">\n" + "Music Type: Type " + musicType + "\n" + "Press enter to start";
+                    break;
+                case 2:
+                    optionText.Text = "Virus Level: " + gameLevel + "\n" + "Game Speed: " + Get_GameSpeed_String() + "\n" + "<Music Type: Type " + musicType + ">\n" + "Press enter to start";
+                    break;
+            }
+            
+
+        }
+
+        public string Get_GameSpeed_String()
+        {
+            string GameSpeedText = "";
+
+            switch (gameSpeed)
+            {
+                case 0.5:
+                    GameSpeedText = "Low";
+                    break;
+                case 1:
+                    GameSpeedText = "Mid";
+                    break;
+                case 2:
+                    GameSpeedText = "High";
+                    break;
+                case 4:
+                    GameSpeedText = "Turbo";
+                    break;
+            }
+            
+            return GameSpeedText;
+
         }
 
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
+
+
             if (e.Key == Key.Enter)
             {
                 if (gameState == GameState.win)
@@ -80,6 +195,8 @@ namespace Amigo
                 }
                 if (gameState == GameState.gameOver)
                 {
+                    points = 0;
+                    gameLevel = 1;
                     Start(gameLevel);
                 }
                 if (gameState == GameState.title)
@@ -88,23 +205,132 @@ namespace Amigo
                     StartFallLoop();
                 }
             }
+            if (e.Key == Key.Left)
+            {
+                switch (gameState)
+                {
+                    case GameState.title:
+
+                        switch (titlestate)
+                        {
+                            case 0:
+                                if (gameLevel > 1){
+                                    gameLevel--;
+                                }
+                                break;
+                            case 1:
+
+                                if (gameSpeed > 0.5)
+                                {
+                                    gameSpeed /= 2.0;
+
+                                }
+                                break;
+
+                            case 2:
+                                if (musicType > 1)
+                                {
+                                    musicType--;
+                                }
+                                break;
+                        }
+                        updateOptionText();
+                        break;
+                    case GameState.playing:
+                        if (activePill != null) { 
+                        board.PillMove(activePill, new Vector(-1, 0));
+                        }
+                        break;
+
+                }
+
+            }
+
+
+            if (e.Key == Key.Right)
+            {
+                switch (gameState)
+                {
+                    case GameState.title:
+
+                        
+                        switch (titlestate)
+                        {
+                            case 0:
+                                if (gameLevel < 5)
+                                {
+                                    gameLevel++;
+                                }
+                                break;
+                            case 1:
+
+                                if (gameSpeed < 4)
+                                {
+                                    gameSpeed *= 2;
+                                }
+                                break;
+                            case 2:
+                                if (musicType < 4)
+                                {
+                                    musicType++;
+                                }
+                                break; ;
+
+                        }
+                        updateOptionText();
+                        break;
+                    
+                    case GameState.playing:
+                        if (activePill != null)
+                        {
+                            board.PillMove(activePill, new Vector(1, 0));
+                            
+                        }
+                        break;
+                }                    
+            }
+            if (e.Key == Key.Down)
+            {
+
+                switch (gameState)
+                {
+                    case GameState.title:
+
+                        titlestate = (titlestate + 1) % 3;
+                        updateOptionText();
+                        break;
+                    case GameState.playing:
+                        if (activePill != null)
+                        {
+
+                            board.PillFall(activePill);
+                        }
+                        break;
+                }
+            }
+            if (e.Key == Key.Up) {
+                {
+                titlestate--;
+
+                if (titlestate < 0)
+                {
+                    titlestate = 2;
+                }
+                updateOptionText();
+                }
+
+            }
             if (activePill == null)
                 return;
 
-            if (e.Key == Key.Z)
+            if (e.Key == Key.Z) {
                 board.Rotate(activePill, false);
-
-            if (e.Key == Key.X)
+            }
+            if (e.Key == Key.X) {
                 board.Rotate(activePill, true);
+            }
 
-            if (e.Key == Key.Left)
-                board.PillMove(activePill, new Vector(-1, 0));
 
-            if (e.Key == Key.Right)
-                board.PillMove(activePill, new Vector(1, 0));
-
-            if (e.Key == Key.Down)
-                board.PillFall(activePill);
             Update();
         }
         Random random = new Random();
@@ -113,7 +339,7 @@ namespace Amigo
         public int Update()
         {
             int virusCount = 0;
-            scoreText.Text = "     Points: " + points.ToString() + "\n\n     Top: amogus";
+            scoreText.Text = "     Points: " + points.ToString() + "\n\n     Top: " + topscore.ToString();
             Grid grid = new Grid();
             for (int i = 0; i < x; i++)
             {
@@ -151,7 +377,7 @@ namespace Amigo
 
                     if (p.isTwoPiece)
                     {
-                        img.RenderTransformOrigin = new Point(0.5, 0.5);
+                        img.RenderTransformOrigin = new System.Windows.Point(0.5, 0.5);
                         ScaleTransform flipTrans = new ScaleTransform();
                         flipTrans.ScaleY = -1;
                         img.RenderTransform = flipTrans;
@@ -164,7 +390,9 @@ namespace Amigo
                 }
             }
             game.Content = grid;
-            infoText.Text = "\n\n     Game Level: " + gameLevel + "\n\n" + "     Game Speed: 69" + "\n\n     Virus Count: " + virusCount;
+            infoText.Text = "\n\n     Game Level: \n      " + gameLevel + "\n" + "     Game Speed: \n      " + Get_GameSpeed_String()  + "\n     Virus Count: \n      " + virusCount;
+
+
             return virusCount;
 
         }
@@ -193,6 +421,7 @@ namespace Amigo
                         le_sound_player.Open(new Uri(Directory.GetCurrentDirectory() + @"\wow.wav"));
                        
                         le_sound_player.Play();
+                        points += (1000 * gameLevel);
                     }
                     gameState = GameState.win;
 
@@ -231,6 +460,12 @@ namespace Amigo
                         le_sound_player.Open(new Uri(Directory.GetCurrentDirectory() + @"\VineBoom.wav"));
 
                         le_sound_player.Play();
+
+                        if (points > topscore)
+                        {
+                            SaveScore(Directory.GetCurrentDirectory() + @"\score.txt");
+                        }
+
                     }
                     gameState = GameState.gameOver;
                     return;
@@ -271,7 +506,7 @@ namespace Amigo
                     bi2.EndInit();
                     img2.Source = bi2;
                     img2.HorizontalAlignment = HorizontalAlignment.Right;
-                    img2.RenderTransformOrigin = new Point(0.5, 0.5);
+                    img2.RenderTransformOrigin = new System.Windows.Point(0.5, 0.5);
                     ScaleTransform flipTrans = new ScaleTransform();
                     flipTrans.ScaleY = -1;
                     img2.RenderTransform = flipTrans;
@@ -309,13 +544,14 @@ namespace Amigo
 
             this.FontSize = 60 * (this.Height / 1080);
             infoText.FontSize = 45 * (this.Height / 1080);
+            optionText.FontSize = 50 * (this.Height / 1080);
         }
 
         public System.Timers.Timer fallLoopTimer;
         public void StartFallLoop()
         {
             //make timer
-            fallLoopTimer = new System.Timers.Timer(1000 * fallSpeed);
+            fallLoopTimer = new System.Timers.Timer((1000 * fallSpeed)/gameSpeed);
             fallLoopTimer.Enabled = true;
             fallLoopTimer.Elapsed += Fall;
         }
@@ -333,6 +569,7 @@ namespace Amigo
                     return "";
             }
         }
+
     }
     enum GameState
     { 
@@ -341,4 +578,6 @@ namespace Amigo
         win,
         title
     }
+
+
 }

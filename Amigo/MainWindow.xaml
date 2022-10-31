@@ -13,40 +13,42 @@
         SizeChanged="Window_SizeChanged"
         Foreground="White">
     <Grid x:Name="mainGame">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition x:Name="gameWidth" Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="1.01*"/>
-                <RowDefinition x:Name="gameHeight1" Height="*"/>
-                <RowDefinition x:Name="gameHeight2" Height="*"/>
-                <RowDefinition x:Name="gameHeight3" Height="*"/>
-                <RowDefinition Height="0.99*"/>
-            </Grid.RowDefinitions>
-            <Grid.Background>
-                <ImageBrush x:Name="background"/>
-            </Grid.Background>
-            <TextBlock Grid.Row="1" x:Name="scoreText" />
-            <ContentControl Grid.Column="2" Grid.Row="1">
-                <Grid x:Name="preview">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width=".45*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height=".5*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <Image x:Name="mario" Grid.ColumnSpan="3" Grid.RowSpan="3" VerticalAlignment="Top"/>
-                </Grid>
-            </ContentControl>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition x:Name="gameWidth" Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1.01*"/>
+            <RowDefinition x:Name="gameHeight1" Height="*"/>
+            <RowDefinition x:Name="gameHeight2" Height="*"/>
+            <RowDefinition x:Name="gameHeight3" Height="*"/>
+            <RowDefinition Height="0.99*"/>
+        </Grid.RowDefinitions>
+        <Grid.Background>
+            <ImageBrush x:Name="background"/>
+        </Grid.Background>
+        <TextBlock Grid.Row="1" x:Name="scoreText" />
 
-            <TextBlock Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Top" x:Name="infoText" Grid.Column="2" Grid.Row="2"/>
+        <TextBlock Grid.Row="2" x:Name="optionText" Grid.Column="1" Margin="0,223,0,0" Grid.RowSpan="3" HorizontalAlignment="Left" VerticalAlignment="Top" Height="334" />
+        <ContentControl Grid.Column="2" Grid.Row="1">
+            <Grid x:Name="preview">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width=".45*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height=".5*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Image x:Name="mario" Grid.ColumnSpan="3" Grid.RowSpan="3" VerticalAlignment="Top"/>
+            </Grid>
+        </ContentControl>
 
-            <ContentPresenter Grid.RowSpan="3" Grid.Row="1" Grid.Column="1" x:Name="game"/>
-        </Grid>
+        <TextBlock Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Top" x:Name="infoText" Grid.Column="2" Grid.Row="2"/>
+
+        <ContentPresenter Grid.RowSpan="3" Grid.Row="1" Grid.Column="1" x:Name="game"/>
+    </Grid>
 </Window>
