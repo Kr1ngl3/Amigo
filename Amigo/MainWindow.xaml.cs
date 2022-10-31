@@ -35,10 +35,12 @@ namespace Amigo
             x = 8,
             y = 13,
             gameLevel = 1;
+
+        GameState gameState;
         readonly double
-            fallSpeed = 1; // seconds to for fall
+            fallSpeed = .5; // seconds to for fall
         Board board;
-        double points = 0;
+        public double points = 0;
         public void Start()
         {
             SoundPlayer player = new SoundPlayer(Directory.GetCurrentDirectory() + @"\sound.wav");
@@ -49,7 +51,7 @@ namespace Amigo
             mario.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\mario1.png"));
             background.ImageSource = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\background.png"));
 
-            board = new(gameLevel, x, y, points, this);
+            board = new(gameLevel, x, y, this);
             StartFallLoop();
         }
 
@@ -77,77 +79,150 @@ namespace Amigo
         Random random = new Random();
         Pill? activePill;
 
-        public void Update()
+        public int Update()
         {
-                Grid grid = new Grid();
-                for (int i = 0; i < x; i++)
+            int virusCount = 0;
+            scoreText.Text = points.ToString() + "\n\n\n\n" + "amogus";
+            Grid grid = new Grid();
+            for (int i = 0; i < x; i++)
+            {
+                grid.ColumnDefinitions.Add(new ColumnDefinition());
+            }
+            for (int i = 0; i < y; i++)
+            {
+                grid.RowDefinitions.Add(new RowDefinition());
+            }
+            foreach (Tile tile in board.Values)
+            {
+                if (tile == null)
+                    continue;
+                if (tile.state == State.virus)
                 {
-                    grid.ColumnDefinitions.Add(new ColumnDefinition());
+                    virusCount++;
+                    Vector pos = board.GetPos(tile);
+                    Image img = new Image();
+                    img.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\" + ParseColorToString(tile.color) + "Virus.png"));
+                    Grid.SetColumn(img, (int)pos.X);
+                    Grid.SetRow(img, (int)pos.Y);
+
+                    grid.Children.Add(img);
                 }
-                for (int i = 0; i < y; i++)
+                if (tile.state == State.pill)
                 {
-                    grid.RowDefinitions.Add(new RowDefinition());
-                }
-                foreach (Tile tile in board.Values)
-                {
-                    if (tile == null)
-                        continue;
-                    if (tile.state == State.virus)
+                    PillPiece p = (PillPiece)tile;
+                    Image img = new Image();
+                    BitmapImage bi = new BitmapImage();
+                    bi.BeginInit();
+                    bi.UriSource = new Uri(Directory.GetCurrentDirectory() + @"\" + ParseColorToString(p.color) + "Pill.png");
+                    bi.Rotation = p.rotation;
+                    bi.EndInit();
+                    img.Source = bi;
+
+                    if (p.isTwoPiece)
                     {
-                        Vector pos = board.GetPos(tile);
-                        Image img = new Image();
-                        img.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\" + ParseColorToString(tile.color) + "Virus.png"));
-                        Grid.SetColumn(img, (int)pos.X);
-                        Grid.SetRow(img, (int)pos.Y);
-
-                        grid.Children.Add(img);
+                        img.RenderTransformOrigin = new Point(0.5, 0.5);
+                        ScaleTransform flipTrans = new ScaleTransform();
+                        flipTrans.ScaleY = -1;
+                        img.RenderTransform = flipTrans;
                     }
-                    if (tile.state == State.pill)
-                    {
-                        PillPiece p = (PillPiece)tile;
-                        Image img = new Image();
-                        BitmapImage bi = new BitmapImage();
-                        bi.BeginInit();
-                        bi.UriSource = new Uri(Directory.GetCurrentDirectory() + @"\" + ParseColorToString(p.color) + "Pill.png");
-                        bi.Rotation = p.rotation;
-                        bi.EndInit();
-                        img.Source = bi;
 
-                        if (p.isTwoPiece)
-                        {
-                            img.RenderTransformOrigin = new Point(0.5, 0.5);
-                            ScaleTransform flipTrans = new ScaleTransform();
-                            flipTrans.ScaleY = -1;
-                            img.RenderTransform = flipTrans;
-                        }
-
-                        Vector pos = board.GetPos(p);
-                        Grid.SetColumn(img, (int)pos.X);
-                        Grid.SetRow(img, (int)pos.Y);
-                        grid.Children.Add(img);
-                    }
+                    Vector pos = board.GetPos(p);
+                    Grid.SetColumn(img, (int)pos.X);
+                    Grid.SetRow(img, (int)pos.Y);
+                    grid.Children.Add(img);
                 }
-                game.Content = grid;
+            }
+            game.Content = grid;
+            infoText.Text = "\n\n" + gameLevel + "\n\n\n" + "69" + "\n\n\n\n" + virusCount;
+            return virusCount;
 
         }
-        bool marioBool = false;
+
+        int loop = 0;
+        Image img1;
+        Image img2;
+        Pill? previewPill;
         private void Fall(Object source, System.Timers.ElapsedEventArgs e)
         {
             this.Dispatcher.Invoke(
             System.Windows.Threading.DispatcherPriority.Normal,
             new Action(() =>
             {
-                if (marioBool)
+                if (Update() == 0)
+                    gameState = GameState.win;
+                if (gameState == GameState.win)
                 {
+                    mario.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\marioWin.png"));
+                    preview.Children.Remove(img1);
+                    preview.Children.Remove(img2);
+                    return;
+                }
+                if (gameState == GameState.gameOver)
+                {
+                    Image img = new Image();
+                    img.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\gameOver.png"));
+                    mario.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\marioDead.png"));
+                    preview.Children.Remove(img1);
+                    preview.Children.Remove(img2);
+                    game.Content = img;
+                    return;
+                }
+                if (activePill == null && (board.ContainsKey(new Vector(3, 0)) || board.ContainsKey(new Vector(4, 0))))
+                {
+                    gameState = GameState.gameOver;
+                    return;
+                }
+                if (loop == 1 && activePill == null)
+                {
+                    activePill = previewPill;
+                    previewPill = null;
                     mario.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\mario1.png"));
+                    preview.Children.Remove(img1);
+                    preview.Children.Remove(img2);
+                    board.Add(new Vector(3, 0), activePill.onePiece);
+                    board.Add(new Vector(4, 0), activePill.twoPiece);
+                    loop--;
+                    Update();
+                    return;
                 }
-                else
+                if (previewPill == null)
                 {
-                    mario.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\mario3.png"));
+                    previewPill = new(random.Next(Enum.GetNames(typeof(Color)).Length), random.Next(Enum.GetNames(typeof(Color)).Length));
+                    mario.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\mario2.png"));
+
+                    PillPiece p1 = (PillPiece)previewPill.onePiece;
+                    PillPiece p2 = (PillPiece)previewPill.twoPiece;
+                    img1 = new Image();
+                    img2 = new Image();
+                    BitmapImage bi1 = new BitmapImage();
+                    BitmapImage bi2 = new BitmapImage();
+                    bi1.BeginInit();
+                    bi1.UriSource = new Uri(Directory.GetCurrentDirectory() + @"\" + ParseColorToString(p1.color) + "Pill.png");
+                    bi1.Rotation = p1.rotation;
+                    bi1.EndInit();
+                    img1.Source = bi1;
+                    img1.HorizontalAlignment = HorizontalAlignment.Left;
+                    bi2.BeginInit();
+                    bi2.UriSource = new Uri(Directory.GetCurrentDirectory() + @"\" + ParseColorToString(p2.color) + "Pill.png");
+                    bi2.Rotation = p2.rotation;
+                    bi2.EndInit();
+                    img2.Source = bi2;
+                    img2.HorizontalAlignment = HorizontalAlignment.Right;
+                    img2.RenderTransformOrigin = new Point(0.5, 0.5);
+                    ScaleTransform flipTrans = new ScaleTransform();
+                    flipTrans.ScaleY = -1;
+                    img2.RenderTransform = flipTrans;
+
+
+                    Grid.SetColumn(img1, 1);
+                    Grid.SetRow(img1, 0);
+                    preview.Children.Add(img1);
+                    Grid.SetColumn(img2, 1);
+                    Grid.SetRow(img2, 0);
+                    preview.Children.Add(img2);
+                    loop++;
+                    Update();
                 }
-                marioBool = !marioBool;
-
-
                 if (activePill != null)
                 {
                     bool test = board.PillFall(activePill);
@@ -156,14 +231,9 @@ namespace Amigo
                         activePill = null;
                         board.TestForConnections();
                     }
+                    Update();
                 }
-                else
-                {
-                    activePill = new(random.Next(Enum.GetNames(typeof(Color)).Length), random.Next(Enum.GetNames(typeof(Color)).Length));
-                    board.Add(new Vector(3, 0), activePill.onePiece);
-                    board.Add(new Vector(4, 0), activePill.twoPiece);
-                }
-                Update();
+
 
             }));
         }
@@ -198,5 +268,11 @@ namespace Amigo
                     return "";
             }
         }
+    }
+    enum GameState
+    { 
+        playing,
+        gameOver,
+        win,
     }
 }

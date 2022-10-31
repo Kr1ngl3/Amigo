@@ -10,8 +10,9 @@
         WindowState="Maximized"
         WindowStyle="None"
         ResizeMode="NoResize"
-        SizeChanged="Window_SizeChanged">
-    <Grid ShowGridLines="true">
+        SizeChanged="Window_SizeChanged"
+        FontSize="45" Foreground="White">
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition x:Name="gameWidth" Width="*"/>
@@ -27,8 +28,25 @@
         <Grid.Background>
             <ImageBrush x:Name="background"/>
         </Grid.Background>
-        <TextBlock x:Name="test"/>
-        <Image x:Name="mario" Grid.Column="2" Grid.Row="1" VerticalAlignment="Top"/>
+        <TextBlock Grid.Row="1" HorizontalAlignment="Center" x:Name="scoreText" />
+        <ContentControl Grid.Column="2" Grid.Row="1">
+            <Grid x:Name="preview">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width=".45*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height=".5*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Image x:Name="mario" Grid.ColumnSpan="3" Grid.RowSpan="3" VerticalAlignment="Top"/>
+            </Grid>
+        </ContentControl>
+
+        <TextBlock Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Top" x:Name="infoText" Grid.Column="2" Grid.Row="2"/>
+
         <ContentPresenter Grid.RowSpan="3" Grid.Row="1" Grid.Column="1" x:Name="game"/>
     </Grid>
 </Window>
