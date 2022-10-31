@@ -15,14 +15,12 @@ namespace Amigo
     {
         int x, y;
         int difficulty = 1;
-        double points;
         MainWindow mw;
-        public Board(int gameNumber, int x, int y, double points, MainWindow mw)
+        public Board(int gameNumber, int x, int y, MainWindow mw)
         {
             this.mw = mw;
             this.y = y;
             this.x = x;
-            this.points = points;
             
             int virusCount = gameNumber * 4;
 
@@ -173,7 +171,6 @@ namespace Amigo
             if (allDone)
             {
                 mw.fallLoopTimer.Start();
-                mw.updateLoopTimer.Start();
                 gravityLoopTimer.Enabled = false;
                 TestForConnections();
             }
@@ -250,13 +247,7 @@ namespace Amigo
                 player.Load();
                 player.Play();
                 double pointsToAdd = difficulty * 0.5 * Math.Pow(2, destroyedVirus) * 100;
-                points += pointsToAdd;
-                mw.Dispatcher.Invoke(
-                System.Windows.Threading.DispatcherPriority.Normal,
-                new Action(() =>
-                {
-                    mw.test.Text = points.ToString();
-                }));
+                mw.points += pointsToAdd;
                 StartGravityLoop();
             }
         }
@@ -267,7 +258,6 @@ namespace Amigo
         {
             //make timer
             mw.fallLoopTimer.Stop();
-            mw.updateLoopTimer.Stop();
 
             gravityLoopTimer = new System.Timers.Timer(1000 / fallTime);
             gravityLoopTimer.Enabled = true;
