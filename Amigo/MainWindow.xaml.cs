@@ -34,8 +34,7 @@ namespace Amigo
         readonly int
             x = 8,
             y = 13,
-            gameLevel = 10,
-            ups = 60; // game updates per second
+            gameLevel = 1;
         readonly double
             fallSpeed = 1; // seconds to for fall
         Board board;
@@ -47,12 +46,10 @@ namespace Amigo
             player.Play();
             bool soundFinished = true;
 
-            
-            Thread.Sleep(20);
+            mario.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\mario1.png"));
             background.ImageSource = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\background.png"));
 
             board = new(gameLevel, x, y, points, this);
-            StartUpdateLoop();
             StartFallLoop();
         }
 
@@ -75,18 +72,10 @@ namespace Amigo
 
             if (e.Key == Key.Down)
                 board.PillFall(activePill);
+            Update();
         }
         Random random = new Random();
         Pill? activePill;
-        private void UpdateTimer(Object source, System.Timers.ElapsedEventArgs e)
-        {
-            this.Dispatcher.Invoke(
-            System.Windows.Threading.DispatcherPriority.Normal,
-            new Action(() => 
-            {
-                Update();
-            }));
-        }
 
         public void Update()
         {
@@ -141,13 +130,24 @@ namespace Amigo
                 game.Content = grid;
 
         }
-
+        bool marioBool = false;
         private void Fall(Object source, System.Timers.ElapsedEventArgs e)
         {
             this.Dispatcher.Invoke(
             System.Windows.Threading.DispatcherPriority.Normal,
             new Action(() =>
             {
+                if (marioBool)
+                {
+                    mario.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\mario1.png"));
+                }
+                else
+                {
+                    mario.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + @"\mario3.png"));
+                }
+                marioBool = !marioBool;
+
+
                 if (activePill != null)
                 {
                     bool test = board.PillFall(activePill);
@@ -163,22 +163,17 @@ namespace Amigo
                     board.Add(new Vector(3, 0), activePill.onePiece);
                     board.Add(new Vector(4, 0), activePill.twoPiece);
                 }
+                Update();
 
             }));
         }
-        public System.Timers.Timer updateLoopTimer;
-        public void StartUpdateLoop()
-        {
-            //make timer
-            updateLoopTimer = new System.Timers.Timer(1000 / ups);
-            updateLoopTimer.Enabled = true;
-            updateLoopTimer.Elapsed += UpdateTimer;
-        }
-
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            gameHeight.Height = new GridLength(0.77037037037 * this.Height);
+            gameHeight1.Height = new GridLength(0.77037037037 * this.Height * 5.0/13.0);
+            gameHeight2.Height = new GridLength(0.77037037037 * this.Height * 4.0/13.0);
+            gameHeight3.Height = new GridLength(0.77037037037 * this.Height * 4.0/13.0);
             gameWidth.Width = new GridLength(0.26666666666 * this.Width);
+
         }
 
         public System.Timers.Timer fallLoopTimer;

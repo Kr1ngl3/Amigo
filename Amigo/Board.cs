@@ -173,7 +173,6 @@ namespace Amigo
             if (allDone)
             {
                 mw.fallLoopTimer.Start();
-                mw.updateLoopTimer.Start();
                 gravityLoopTimer.Enabled = false;
                 TestForConnections();
             }
@@ -267,7 +266,6 @@ namespace Amigo
         {
             //make timer
             mw.fallLoopTimer.Stop();
-            mw.updateLoopTimer.Stop();
 
             gravityLoopTimer = new System.Timers.Timer(1000 / fallTime);
             gravityLoopTimer.Enabled = true;

@@ -11,21 +11,24 @@
         WindowStyle="None"
         ResizeMode="NoResize"
         SizeChanged="Window_SizeChanged">
-    <Grid>
+    <Grid ShowGridLines="true">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition x:Name="gameWidth" Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition x:Name="gameHeight" Height="*"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="1.01*"/>
+            <RowDefinition x:Name="gameHeight1" Height="*"/>
+            <RowDefinition x:Name="gameHeight2" Height="*"/>
+            <RowDefinition x:Name="gameHeight3" Height="*"/>
+            <RowDefinition Height="0.99*"/>
         </Grid.RowDefinitions>
         <Grid.Background>
             <ImageBrush x:Name="background"/>
         </Grid.Background>
         <TextBlock x:Name="test"/>
-        <ContentPresenter Grid.Row="1" Grid.Column="1" x:Name="game"/>
+        <Image x:Name="mario" Grid.Column="2" Grid.Row="1" VerticalAlignment="Top"/>
+        <ContentPresenter Grid.RowSpan="3" Grid.Row="1" Grid.Column="1" x:Name="game"/>
     </Grid>
 </Window>
